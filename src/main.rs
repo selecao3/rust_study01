@@ -52,11 +52,21 @@ fn new(todo_form: Form<Todo>, conn: db::Conn) -> Flash<Redirect> {
     まずFlashもRedirectも構造体である。
     下のif文を通ると漏れなくFlash::errorを通る。（定義を飛ぶと書いてあるけど）紆余曲折を経て、
     構造体Flashはパラメータを得る（name, message, consumed, innerの４つ ）
-    次に構造体Redirectにパラメータが渡される。
+    次に構造体Redirectにパラメータが渡される...
+
 
     ざっくり言うと、裏ではstruct, impl, fnの三つが動いて複雑な構造を作っている。
-    それに合わせて、返り値も決まった形を返す。
+    それに合わせて、返り値も決まっている
+    この場合では、new関数は「入力された文字をサーバーにPOSTする」という結果を返す関数である。
+    つまり、単純なString型などではなく複雑な型が返されないとおかしい。
 
+    表現がおかしいけど、結局のところこの関数は「構造体Flash<Redirect>」に返している。
+    struct Flash<Redirect>{
+        hoge: aaa,
+        hage: bbb,
+        ...
+    }
+    struct内のメンバー、それぞれに任意の値が代入された状態
     */
     let todo = todo_form.into_inner();
     if todo.description.is_empty() {
@@ -68,11 +78,6 @@ fn new(todo_form: Form<Todo>, conn: db::Conn) -> Flash<Redirect> {
         Flash::error(Redirect::to("/"), "Whoops! The server failed.")
     }
 }
-/*
-new関数でやってること
-・
-
-*/
 
 #[put("/<id>")]
 fn toggle(id: i32, conn: db::Conn) -> Result<Redirect, Template> {
@@ -82,6 +87,13 @@ fn toggle(id: i32, conn: db::Conn) -> Result<Redirect, Template> {
         Err(Template::render("index", &Context::err(&conn, "Couldn't toggle task.")))
     }
 }
+
+/*
+構造体Resultのメンバ、Ok()とErr()が渡される。
+Okの中身はRedirectのメンバへ、Errの中身はTemplateのメンバへ渡され、処理される。
+(より正確に言うと、各トレイトで処理されて、生成されたオブジェクトが各メンバに渡される。)
+*/
+
 
 #[delete("/<id>")]
 fn delete(id: i32, conn: db::Conn) -> Result<Flash<Redirect>, Template> {
@@ -115,6 +127,7 @@ fn rocket() -> (Rocket, Option<db::Conn>) {
         .attach(Template::fairing());
 
     (rocket, conn)
+    //返り値のタプル！
 }
 
 fn main() {

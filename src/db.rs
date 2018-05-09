@@ -20,6 +20,8 @@ pub struct Conn(pub PooledConnection<ConnectionManager<SqliteConnection>>);
 
 impl Deref for Conn {
     type Target = SqliteConnection;
+    //type: 型のエイリアス。この一文でSqliteConnectionという型はTargetという「名前」になった
+    //structのように複雑な型を一つにまとめた、新しい型を生成したのではなく、ただ別の名前に変えただけ。
 
     #[inline(always)]
     fn deref(&self) -> &Self::Target {
