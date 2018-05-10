@@ -1,3 +1,8 @@
+/*
+ここではデータベースでの処理を記述している。
+*/
+
+
 use diesel;
 use diesel::prelude::*;
 use diesel::sqlite::SqliteConnection;
@@ -11,6 +16,7 @@ mod schema {
         }
     }
 }
+//mod: 上のmodキーワードよりschemaブロックで包まれたtable!マクロはモジュールになった。
 
 use self::schema::tasks;
 use self::schema::tasks::dsl::{tasks as all_tasks, completed as task_completed};
@@ -29,6 +35,11 @@ pub struct Todo {
 }
 
 impl Task {
+    /*
+    ここでは構造体Taskについての処理を書いている。
+    例えば、insert関数がmain.rsで呼ばれると、処理が行われる(多分、PUTメソッドを実行する関数)
+    insert関数から返された値はbool型として返される
+    */
     pub fn all(conn: &SqliteConnection) -> Vec<Task> {
         all_tasks.order(tasks::id.desc()).load::<Task>(conn).unwrap()
     }
