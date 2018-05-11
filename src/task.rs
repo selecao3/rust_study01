@@ -37,7 +37,7 @@ pub struct Todo {
 impl Task {
     /*
     ここでは構造体Taskについての処理を書いている。
-    例えば、insert関数がmain.rsで呼ばれると、処理が行われる(多分、PUTメソッドを実行する関数)
+    例えば、insert関数がmain.rsで呼ばれると、処理が行われる(多分、POSTメソッドを実行する関数)
     insert関数から返された値はbool型として返される
     */
     pub fn all(conn: &SqliteConnection) -> Vec<Task> {
@@ -45,7 +45,8 @@ impl Task {
     }
 
     pub fn insert(todo: Todo, conn: &SqliteConnection) -> bool {
-        let t = Task { id: None, description: todo.description, completed: false };
+        let t = Task { id: None, description: todo.description, completed: false};
+        //メモ：completedをfalseにすると文字に横線が引かれる。
         diesel::insert_into(tasks::table).values(&t).execute(conn).is_ok()
     }
 
